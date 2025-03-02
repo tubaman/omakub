@@ -2,9 +2,17 @@
 
 # Add the official Docker repo
 sudo install -m 0755 -d /etc/apt/keyrings
-sudo wget -qO /etc/apt/keyrings/docker.asc https://download.docker.com/linux/ubuntu/gpg
+sudo wget -qO /etc/apt/keyrings/docker.asc https://download.docker.com/linux/debian/gpg
 sudo chmod a+r /etc/apt/keyrings/docker.asc
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+. /etc/os-release
+if [ "$VERSION_CODENAME" == "trixie" ]; then
+	DOCKER_VERSION_CODENAME="bookworm"
+else
+	DOCKER_VERSION_CODENAME="$VERSION_CODENAME"
+fi
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $DOCKER_VERSION_CODENAME stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt update
 
 # Install Docker engine and standard plugins
